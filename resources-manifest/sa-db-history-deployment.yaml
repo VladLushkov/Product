@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sa-history-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sa-history-db
+  template:
+    metadata:
+      labels:
+        app: sa-history-db
+    spec:
+      containers:
+        - name: history-db
+          image: postgres:13
+          env:
+            - name: POSTGRES_USER
+              value: "postgres"
+            - name: POSTGRES_PASSWORD
+              value: "postgres"
+            - name: POSTGRES_DB
+              value: "history-service-db"
+          ports:
+            - containerPort: 5432

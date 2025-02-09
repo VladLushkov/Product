@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sa-storehouse-app
+  labels:
+    app: sa-storehouse-app
+spec:
+  selector:
+    matchLabels:
+      app: sa-storehouse-app
+  replicas: 1
+  minReadySeconds: 15
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: sa-storehouse-app
+    spec:
+      containers:
+        - image: vladislavlushkov/storehouse
+          imagePullPolicy: Always
+          name: sa-storehouse-app
+          env:
+            - name: STOREHOUSE_DB_HOST
+              value: "sa-storehouse-db"
+            - name: STOREHOUSE_DB_PORT
+              value: "5432"
+            - name: STOREHOUSE_DB_USERNAME
+              value: "postgres"
+            - name: STOREHOUSE_DB_PASSWORD
+              value: "postgres"
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: "kafka-service"
+          ports:
+            - containerPort: 8080

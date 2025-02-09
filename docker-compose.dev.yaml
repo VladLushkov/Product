@@ -1,0 +1,92 @@
+services:
+
+  storehouse:
+    container_name: storehouse
+    image: vladislavlushkov/storehouse
+    restart: unless-stopped
+    ports:
+      - '8082:8082'
+    environment:
+      _JAVA_OPTIONS: -Xmx256m
+      STOREHOUSE_DB_USERNAME: postgres
+      STOREHOUSE_DB_PASSWORD: postgres
+      STOREHOUSE_DB_HOST: storehouse-db
+      STOREHOUSE_DB_PORT: 5432
+    depends_on:
+      - storehouse-db
+    logging:
+      driver: "json-file"
+      options:
+        max-size: 50m
+
+  history:
+    container_name: history
+    image: vladislavlushkov/history
+    restart: unless-stopped
+    ports:
+      - '8081:8081'
+    environment:
+      _JAVA_OPTIONS: -Xmx256m
+      HISTORY_DB_USERNAME: postgres
+      HISTORY_DB_PASSWORD: postgres
+      HISTORY_DB_HOST: history-service-db
+      HISTORY_DB_PORT: 5432
+    depends_on:
+      - history-service-db
+    logging:
+      driver: "json-file"
+      options:
+        max-size: 50m
+
+  storehouse-db:
+    container_name: storehouse-db
+    image: postgres:14.1-alpine
+    ports:
+      - '5437:5432'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: storehouse-db
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: 50m
+
+  history-service-db:
+    container_name: history-service-db
+    image: postgres:14.1-alpine
+    ports:
+      - '5438:5432'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: history-service-db
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: 50m
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.0.1
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+
+  kafka:
+      image: confluentinc/cp-kafka:7.0.1
+      environment:
+        KAFKA_BROKER_ID: 1
+        KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+        KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+        KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://:29092,PLAINTEXT_INTERNAL://kafka:9092
+        KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+        KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+        KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      ports:
+        - "9092:9092"
+      depends_on:
+        - zookeeper

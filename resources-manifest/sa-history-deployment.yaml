@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sa-history-app
+  labels:
+    app: sa-history-app
+spec:
+  selector:
+    matchLabels:
+      app: sa-history-app
+  replicas: 1
+  minReadySeconds: 15
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: sa-history-app
+    spec:
+      containers:
+        - image: vladislavlushkov/history
+          imagePullPolicy: Always
+          name: sa-history-app
+          env:
+            - name: HISTORY_DB_HOST
+              value: "sa-history-db"
+            - name: HISTORY_DB_PORT
+              value: "5432"
+            - name: HISTORY_DB_USERNAME
+              value: "postgres"
+            - name: HISTORY_DB_PASSWORD
+              value: "postgres"
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: "kafka-service"
+          ports:
+            - containerPort: 8080

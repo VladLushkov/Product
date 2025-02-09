@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sa-storehouse-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sa-storehouse-db
+  template:
+    metadata:
+      labels:
+        app: sa-storehouse-db
+    spec:
+      containers:
+        - name: storehouse-db
+          image: postgres:13
+          env:
+            - name: POSTGRES_USER
+              value: "postgres"
+            - name: POSTGRES_PASSWORD
+              value: "postgres"
+            - name: POSTGRES_DB
+              value: "storehouse-db"
+          ports:
+            - containerPort: 5432
