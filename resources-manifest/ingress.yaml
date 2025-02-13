@@ -5,13 +5,12 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: myapp123.com
-      http:
+    - http:
         paths:
-          - backend:
+          - path: /
+            pathType: Prefix
+            backend:
               service:
                 name: sa-storehouse-app-lb
                 port:
                   number: 80
-            pathType: Prefix
-            path: /
