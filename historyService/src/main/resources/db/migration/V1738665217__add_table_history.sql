@@ -1,8 +1,8 @@
 create table history
 (
-    id             serial primary key,
+    id             bigserial primary key,
     operation_type varchar(50) not null,
-    product_name   VARCHAR(50) not null,
+    product_name   varchar(50) not null,
     old_count      int         not null,
     new_count      int         not null,
 

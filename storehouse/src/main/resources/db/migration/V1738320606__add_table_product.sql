@@ -1,6 +1,6 @@
 create table product
 (
-    id         serial primary key,
+    id         bigserial primary key,
     name       varchar(50) not null unique,
     type       VARCHAR(50) not null,
     count      int         not null,
@@ -21,7 +21,7 @@ COMMENT ON COLUMN product.update_at IS 'Даиа обновления';
 
 create table product_type
 (
-    id        serial primary key,
+    id        bigserial primary key,
     name      varchar(50) not null,
     is_enable BOOLEAN default true
 );
