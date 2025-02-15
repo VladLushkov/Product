@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sa-tgbot-app
+  labels:
+    app: sa-tgbot-app
+spec:
+  selector:
+    matchLabels:
+      app: sa-tgbot-app
+  replicas: 1
+  minReadySeconds: 15
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: sa-tgbot-app
+    spec:
+      containers:
+        - image: vladislavlushkov/tgbot
+          imagePullPolicy: Always
+          name: sa-history-app
+          env:
+            - name: TGBOT_DB_HOST
+              value: "sa-tgbot-db"
+            - name: TGBOT_DB_PORT
+              value: "5432"
+            - name: TGBOT_DB_USERNAME
+              value: "postgres"
+            - name: TGBOT_DB_PASSWORD
+              value: "postgres"
+          ports:
+            - containerPort: 8080

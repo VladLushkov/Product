@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sa-tgbot-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sa-tgbot-db
+  template:
+    metadata:
+      labels:
+        app: sa-tgbot-db
+    spec:
+      containers:
+        - name: tgbot-db
+          image: postgres:13
+          env:
+            - name: POSTGRES_USER
+              value: "postgres"
+            - name: POSTGRES_PASSWORD
+              value: "postgres"
+            - name: POSTGRES_DB
+              value: "tgbot-db"
+          ports:
+            - containerPort: 5432

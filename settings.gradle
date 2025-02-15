@@ -8,3 +8,4 @@ pluginManagement {
 rootProject.name = 'product'
 include 'storehouse'
 include 'historyService'
+include 'tgbot'

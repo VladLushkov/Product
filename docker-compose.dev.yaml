@@ -38,6 +38,40 @@ services:
       options:
         max-size: 50m
 
+  tgbot:
+    container_name: tgbot
+    image: vladislavlushkov/tgbot
+    restart: unless-stopped
+    ports:
+      - '8083:8083'
+    environment:
+      _JAVA_OPTIONS: -Xmx256m
+      HISTORY_DB_USERNAME: postgres
+      HISTORY_DB_PASSWORD: postgres
+      HISTORY_DB_HOST: history-service-db
+      HISTORY_DB_PORT: 5432
+    depends_on:
+      - tgbot-db
+    logging:
+      driver: "json-file"
+      options:
+        max-size: 50m
+
+  tgbot-db:
+    container_name: tgbot-db
+    image: postgres:14.1-alpine
+    ports:
+      - '5439:5432'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: tgbot-db
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: 50m
+
   storehouse-db:
     container_name: storehouse-db
     image: postgres:14.1-alpine
