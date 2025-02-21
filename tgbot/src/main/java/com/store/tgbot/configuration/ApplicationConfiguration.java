@@ -1,50 +1,49 @@
 package com.store.tgbot.configuration;
 
-
-import com.store.tgbot.telegramm.Bot;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.context.annotation.*;
-import org.telegram.telegrambots.meta.TelegramBotsApi;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
+
 
 @Configuration
 @Slf4j
 public class ApplicationConfiguration {
-    @Value("${tg.bot.name}")
-    private String tgBotName;
-
-    @Value("${tg.bot.token}")
-    private String tgBotToken;
 
     @Value("${integration.internal.host.storehouse}")
     String storeHouseHost;
 
-    @Autowired
-    @Lazy
-    private Bot tgBot;
+    @Value("${integration.internal.host.history}")
+    String historyHouseHost;
 
-    @Bean
-    public TelegramBotsApi telegramBotsApi() throws TelegramApiException {
-        TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
-        botsApi.registerBot(tgBot);
-        return botsApi;
-    }
-
-    @Bean
-    public String tgBotName() {
-        return tgBotName;
-    }
-
-    @Bean
-    public String tgBotToken() {
-        return tgBotToken;
-    }
+    @Value("${integration.internal.host.tg.sender}")
+    String tgSenderHost;
 
     @Bean
     public String storeHouseHost() {
         log.info(" storeHouseHost : {}", storeHouseHost);
         return storeHouseHost;
+    }
+
+    @Bean
+    public String historyHouseHost() {
+        log.info(" historyHouseHost : {}", historyHouseHost);
+        return historyHouseHost;
+    }
+
+    @Bean
+    public String tgSenderHost() {
+        log.info(" tgSenderHost : {}", tgSenderHost);
+        return tgSenderHost;
+    }
+
+    @Bean
+    public JsonMapper jsonMapper() {
+        return JsonMapper.builder()
+                .addModule(new JavaTimeModule())
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .build();
     }
 }
